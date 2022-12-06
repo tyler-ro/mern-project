@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Messages from "../Messages/Messages";
 import InputEmoji from "react-input-emoji";
-
 import axios from "axios";
 
 export default function ChatBox({
   currentChat,
   currentUserId,
-  setSendMessage,
-  receivedMessage,
+  setMessages,
+  setNewMessage,
+  messages,
+  newMessage,
+  socket
 }) {
   const [userData, setUserData] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
-
-  // add received message to list of messages
-  useEffect(() => {
-    if (
-      receivedMessage !== null &&
-      receivedMessage?.chatId == currentChat?._id
-    ) {
-      setMessages([...messages, receivedMessage]);
-    }
-  }, [receivedMessage]);
 
   // get chat member data
   useEffect(() => {
@@ -30,41 +20,27 @@ export default function ChatBox({
     setUserData(userId);
   }, [currentChat, currentUserId]);
 
-  // get messages for chat
-  useEffect(() => {
-    const serverRoute = "api/messages";
-    const getChatMessages = async () => {
-      try {
-        let { data } = await axios.get(`${serverRoute}/${currentChat._id}`);
-        setMessages(data);
-        console.log(messages);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    if (currentChat !== null) getChatMessages();
-  }, [currentChat]);
+  //handle functions
 
   function handleChange(inputText) {
     setNewMessage(inputText);
   }
   async function handleSend(e) {
     e.preventDefault();
-    const message = {
+    const messageInfo = {
       chatId: currentChat._id,
       senderId: currentUserId,
       text: newMessage,
     };
+    const receiverId = currentChat?.members?.find((id) => id !== currentUserId)
     try {
-      let newMessage = await axios.post(`api/messages`, message);
-      console.log(newMessage.data);
+      let newMessage = await axios.post(`api/messages`, messageInfo);
+      socket.current.emit('send-message', {messageInfo: newMessage.data, receiverId});
       setMessages([...messages, newMessage.data]);
       setNewMessage("");
     } catch (error) {
       console.log(error);
     }
-    const receiverId = currentChat.members.find((id) => id !== currentUserId);
-    setSendMessage({ ...message, receiverId });
   }
 
   return (
@@ -74,7 +50,13 @@ export default function ChatBox({
           This ChatBox will render the container for a conversation the user
           selects
           <hr />
-          <Messages messages={messages} />
+          <Messages
+            messages={messages}
+            setMessages={setMessages}
+            socket={socket}
+            currentChat={currentChat}
+            currentUserId={currentUserId}
+          />
           <InputEmoji value={newMessage} onChange={handleChange} />
           <button onClick={handleSend}>Send</button>
         </div>

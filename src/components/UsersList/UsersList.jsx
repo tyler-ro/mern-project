@@ -1,23 +1,26 @@
-import React from "react";
-import axios from "axios";
+import React from 'react'
 
-async function getAllUsers(req, res) {
-  try {
-    const users = await User.find({});
-    res.status(200);
-  } catch (error) {
-    res.status(400).json(error);
+export default function UsersList() {
+  async function getAllUsers(req, res) {
+    try {
+      // const users = await User.find({});
+      res.status(200);
+    } catch (error) {
+      res.status(400).json(error);
+    }
   }
-}
-//map function user.name
-{/* <div>
+
+
+  //map function user.name
+/* <div>
 {users.map((user, userIndex) => (
   <div key={userIndex}>
 ))}
-</div> */}
-return (
-  <>
-    <div style={{ border: "1px solid black" }}>
+</div> */
+
+  return (
+    <>
+    <div style={{border: "1px solid black"}}>
       This UsersList gets data from DB of all users
       <ul>
         <li>User #1 </li>
@@ -27,4 +30,7 @@ return (
       </ul>
     </div>
   </>
-);
+  )
+}
+
+

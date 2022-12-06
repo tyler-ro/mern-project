@@ -1,5 +1,8 @@
 import React, { Component } from "react";
-import { signUp } from '../../utilities/UserRequests/users-service'
+import { signUp } from "../../utilities/UserRequests/users-service";
+// mui below
+import { TextField } from "@mui/material";
+import Button from "@mui/material/Button";
 
 export class SignUpForm extends Component {
   state = {
@@ -12,27 +15,26 @@ export class SignUpForm extends Component {
     error: "",
   };
 
-  handleChange = (e) => { 
+  handleChange = (e) => {
     this.setState({
-        [e.target.name]: e.target.value, 
-        error: '',
-    })
-  }
+      [e.target.name]: e.target.value,
+      error: "",
+    });
+  };
 
   handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const formData = {...this.state}
-      delete formData.error
-      delete formData.confirm
-      
-      const user = await signUp(formData)
-      this.props.setUser(user)
-    } catch (error) {
-      this.setState({error: 'Sign Up Failed - Try Again'})    
-    }
+      const formData = { ...this.state };
+      delete formData.error;
+      delete formData.confirm;
 
-  }
+      const user = await signUp(formData);
+      this.props.setUser(user);
+    } catch (error) {
+      this.setState({ error: "Sign Up Failed - Try Again" });
+    }
+  };
   render() {
     const disable = this.state.password !== this.state.confirm;
     return (
@@ -40,7 +42,9 @@ export class SignUpForm extends Component {
         <div className="form-container">
           <form autoComplete="off" onSubmit={this.handleSubmit}>
             <label>First Name</label>
-            <input
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
               type="text"
               name="firstname"
               value={this.state.name}
@@ -48,7 +52,9 @@ export class SignUpForm extends Component {
               required
             />
             <label>Last Name</label>
-            <input
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
               type="text"
               name="lastname"
               value={this.state.name}
@@ -56,7 +62,9 @@ export class SignUpForm extends Component {
               required
             />
             <label>Email</label>
-            <input
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
               type="email"
               name="email"
               value={this.state.email}
@@ -64,7 +72,9 @@ export class SignUpForm extends Component {
               required
             />
             <label>Password</label>
-            <input
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
               type="password"
               name="password"
               value={this.state.password}
@@ -72,16 +82,18 @@ export class SignUpForm extends Component {
               required
             />
             <label>Confirm</label>
-            <input
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
               type="password"
               name="confirm"
               value={this.state.confirm}
               onChange={this.handleChange}
               required
             />
-            <button type="submit" disabled={disable}>
+            <Button variant="contained" type="submit" disabled={disable}>
               SIGN UP
-            </button>
+            </Button>
           </form>
         </div>
         <p className="error-message">&nbsp;{this.state.error}</p>

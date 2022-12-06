@@ -22,7 +22,15 @@ async function getMessages(req, res) {
   }
 }
 
+async function deleteMessage(req, res){
+  const {messageId} = req.params
+  await Message.findByIdAndDelete(messageId)
+  res.status(200).json("Message Deleted")
+  
+}
+
 module.exports = {
   createMessage,
   getMessages,
+  delete: deleteMessage
 };

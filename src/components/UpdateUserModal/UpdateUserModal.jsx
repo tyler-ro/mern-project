@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Modal, useMantineTheme } from "@mantine/core";
 
 export default function UpdateUserModal({ modalOpened, setModalOpened }) {

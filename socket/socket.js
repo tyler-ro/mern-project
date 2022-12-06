@@ -27,22 +27,44 @@ io.on("connection", (socket) => {
 
   //send message
   socket.on("send-message", (data) => {
-    const { receiverId } = data;
-    let user; 
-    activeUsers.forEach(u => {
-      if (u.userId === receiverId ){
-        user = u
+    const { receiverId, messageInfo } = data;
+    let user;
+    activeUsers.forEach((u) => {
+      if (u.userId === receiverId) {
+        user = u;
       }
-    })
-
+    });
+    console.log(user);
     console.log("Sending ReceiverId");
-    console.log("Data: ", data);
+    console.log("Data: ", messageInfo);
     //if user exists within a specific socket Id, then emit "receive-message" that
     //will be retrieved on client-side
     if (user) {
-      io.to(user.socketId).emit("receive-message", data);
+      console.log("user socketid: ", user.socketId)
+      io.to(user.socketId).emit("receive-message", messageInfo);
     }
   });
+
+  //delete message
+  socket.on("delete-message", (data) => {
+    const { messages, receiverId, currentUserId } = data;
+    let receiver;
+    let sender;
+    activeUsers.forEach((u) => {
+      if (u.userId === receiverId) {
+        receiver = u;
+      }
+      if (u.userId === currentUserId){
+        sender = u
+      }
+    });
+    if (receiver) {
+      io.to(receiver.socketId).emit("deleted", data);
+      io.to(sender.socketId).emit("deleted", data);
+    }
+  });
+
+  //if user
 
   // if client disconnects
   socket.on("disconnect", () => {

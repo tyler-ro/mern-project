@@ -9,8 +9,8 @@ export default function ChatList({ user }) {
   const [chats, setChats] = useState([]);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
-  const [sendMessage, setSendMessage] = useState(null);
-  const [receivedMessage, setReceivedMessage] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
 
   //get chat
   useEffect(() => {
@@ -32,31 +32,48 @@ export default function ChatList({ user }) {
     socket.current = io("http://localhost:8800");
     //to subscribe to specific event, we have to write emit
     socket.current.emit("new-user-add", user._id);
+  }, [user]);
+
+  //listen on get users, receive, deleted...
+  useEffect(() => {
+    socket.current.on("receive-message", (data) => {
+      setMessages((messages) => [...messages, data]);
+    });
+    socket.current.on("deleted", (data) => {
+      const { messageId } = data
+      setMessages((messages) => messages.filter((message) => message._id !== messageId))
+    });
     socket.current.on("get-users", (users) => {
       setOnlineUsers(users);
     });
-  }, [user]);
-
-  // send message to socket server
-  useEffect(() => {
-    if (sendMessage !== null) {
-      socket.current.emit("send-message", sendMessage);
-    }
-  }, [sendMessage]);
-
-  //receive message from socket server
-  useEffect(() => {
-    socket.current.on("receive-message", (data) => {
-      console.log(data);
-      setReceivedMessage(data);
-    });
+    return () => {
+      socket.current.off("receive-message");
+      socket.current.off("deleted");
+      socket.current.off("get-users");
+      socket.current.disconnect()
+    };
   }, []);
 
+  // get messages for chat
+  useEffect(() => {
+    const serverRoute = "api/messages";
+    const getChatMessages = async () => {
+      try {
+        let { data } = await axios.get(`${serverRoute}/${currentChat._id}`);
+        setMessages(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (currentChat !== null) getChatMessages();
+  }, [currentChat]);
+  // function to get chat messages and setMessages
+
   //check who is online
-  function isOnline(chat){
-    const chatMember = chat.members.find((member) => member !== user._id)
-    const online = onlineUsers.find((user)=> user.userId === chatMember)
-    return online ? true : false
+  function isOnline(chat) {
+    const chatMember = chat.members.find((member) => member !== user._id);
+    const online = onlineUsers.find((user) => user.userId === chatMember);
+    return online ? true : false;
   }
 
   return (
@@ -69,23 +86,27 @@ export default function ChatList({ user }) {
             style={{ border: "1px solid red" }}
             key={idx}
             onClick={() => setCurrentChat(chat)}
-            
           >
-            <Conversation currentUserId={user._id} chat={chat} online = {isOnline(chat)}/>
-
+            <Conversation
+              currentUserId={user._id}
+              chat={chat}
+              online={isOnline(chat)}
+            />
           </div>
         ))}
-        <ul>
-          <li>Convo #2 </li>
-          <li>Convo #3 </li>
-          <li>Convo #... </li>
-        </ul>
       </div>
       <ChatBox
         currentChat={currentChat}
         currentUserId={user._id}
-        setSendMessage={setSendMessage}
-        receivedMessage={receivedMessage}
+
+
+        // remainingMessage={remainingMessage}
+        setMessages={setMessages}
+        setNewMessage={setNewMessage}
+        messages={messages}
+        newMessage={newMessage}
+        socket={socket}
+        // handleUpdate={handleUpdate}
       />
     </>
   );
