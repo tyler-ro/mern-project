@@ -1,5 +1,5 @@
 //react toolkit
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 //utilities
 import { getUser } from "../../utilities/UserRequests/users-service";
@@ -25,8 +25,17 @@ export const themeOptions = createTheme({
   },
 });
 
+
+
 function App() {
   const [user, setUser] = useState(getUser());
+
+  useEffect( () => {
+    localStorage.removeItem('token')
+    setUser(null)
+  }, [])
+
+
   return (
     <main className="App">
       <ThemeProvider theme={themeOptions}>
@@ -34,7 +43,7 @@ function App() {
           <>
             <NavBar user={user} setUser={setUser} />
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<HomePage user={user} setUser={setUser} />} />
               <Route path="/chats" element={<ChatPage user={user} />} />
               <Route path="/check-token" element={<CheckTokenPage />} />
             </Routes>

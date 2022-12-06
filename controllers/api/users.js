@@ -1,6 +1,12 @@
 const User = require("../../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+// const uuid = require("uuid");
+// const S3 = require("react-aws-s3")
+let aws = require('aws-sdk')
+
+// aws.config.update({accessKeyId: "AKIAUYOEP5OLEHW6ZUMN", secretAccessKey: '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'})
+// var s3bucket = new aws.S3({ params: { Bucket: "ga-chatterbox"}})
 
 async function create(req, res) {
   try {
@@ -11,6 +17,7 @@ async function create(req, res) {
     res.status(400).json(error);
   }
 }
+
 
 async function login(req, res) {
   try {
@@ -54,8 +61,19 @@ function checkToken(req, res) {
   res.json(req.exp);
 }
 
+//getUser
+//getAllUsers
+
 //Helper Functions
 
 function createJWT(user) {
   return jwt.sign({ user }, process.env.SECRET, { expiresIn: "24h" });
 }
+
+module.exports = {
+  create,
+  login,
+  update:updateUser,
+  uploadPicture,
+  checkToken,
+};

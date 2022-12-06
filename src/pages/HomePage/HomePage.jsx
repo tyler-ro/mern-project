@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import UpdateUserModal from "../../components/UpdateUserModal/UpdateUserModal";
 
-export default function Home() {
+
+export default function Home({user,setUser}) {
   const [modalOpened, setModalOpened] = useState(false);
+ 
   return (
     <>
       <div>Home Page</div>
@@ -11,8 +13,10 @@ export default function Home() {
         <UpdateUserModal
           modalOpened={modalOpened}
           setModalOpened={setModalOpened}
-          // data={user}
+          user={user}
+          setUser={setUser}
         />
+       
       </div>
     </>
   );

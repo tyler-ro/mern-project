@@ -3,7 +3,8 @@ const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
 const cors = require('cors');
-
+const multer = require('multer');
+const fileupload = require('express-fileupload')
 require("dotenv").config();
 require("./config/database");
 require('./socket/socket')
@@ -13,13 +14,14 @@ require('./socket/socket')
 const port = process.env.PORT || 3001;
 
 const app = express();
-
+const upload = multer({dest: 'public/uploads/'}).single('file');
 app.use(cors())
+app.use(fileupload());
 app.use(logger("dev"));
 app.use(express.json());
 // Configure both serve-favicon & static middleware
 // to serve from the production 'build' folder
-app.use(favicon(path.join(__dirname, "build", "favicon.ico")));
+//app.use(favicon(path.join(__dirname, "build", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "build")));
 // Middleware to verify token and assign user object of payload to req.user.
 // Be sure to mount before routes

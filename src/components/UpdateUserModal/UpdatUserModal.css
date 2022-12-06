@@ -1,0 +1,63 @@
+h1{
+  color:#2F15D1;
+  ;
+}
+
+.updateContainer {
+    display:flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+}
+
+.updateContainer >label {
+    color:red
+}
+
+.infoInput {
+    border:1px solid #1165EB;
+    border-radius: 20px;
+    width:280px;
+    height: 46px;
+    color:#1165EB;
+    font-size: 14px;
+    text-align: center;
+    margin: 4px;;
+}
+.profileImg{
+  border:2px solid #1165EB;
+    border-radius: 100px;
+    width:100px;
+}
+
+.submitBtn {
+    border:1px solid #1165EB;
+    border-radius: 20px;
+    background-color: #2F15D1;
+    width:280px;
+    height: 46px;
+    color:#ffffff;
+    font-size: 14px;
+    font-weight: bold;
+}
+.custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+  }
+  .custom-file-input::before {
+    content: 'Select some files';
+    display: inline-block;
+    border:1px solid #1165EB;
+    border-radius: 20px;
+    background-color: #2F15D1;
+    color:#ffffff;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    /* -webkit-user-select: none; */
+    font-size: 14px;
+  }
+  .custom-file-input:hover::before {
+    color:rgb(212, 215, 215);
+  }
+  

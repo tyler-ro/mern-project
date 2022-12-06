@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
     //if user exists within a specific socket Id, then emit "receive-message" that
     //will be retrieved on client-side
     if (user) {
-      console.log("user socketid: ", user.socketId)
+      console.log("user socketid: ", user.socketId);
       io.to(user.socketId).emit("receive-message", messageInfo);
     }
   });
@@ -54,8 +54,8 @@ io.on("connection", (socket) => {
       if (u.userId === receiverId) {
         receiver = u;
       }
-      if (u.userId === currentUserId){
-        sender = u
+      if (u.userId === currentUserId) {
+        sender = u;
       }
     });
     if (receiver) {
